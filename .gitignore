@@ -1,7 +1,11 @@
-# 编译产物（请到 Release 页下载，或用 build.ps1 自行编译）
+# 编译产物（请到 Release 页下载，或用 build 脚本自行编译）
 *.exe
 *.pdb
 *.obj
+
+# macOS 编译产物
+*.app/
+macos/SilentShot.app/
 
 # 运行时文件
 _*.log
@@ -14,3 +18,4 @@ _*.log
 *.user
 Thumbs.db
 desktop.ini
+.DS_Store
