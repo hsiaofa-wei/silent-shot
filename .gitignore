@@ -1,0 +1,16 @@
+# 编译产物（请到 Release 页下载，或用 build.ps1 自行编译）
+*.exe
+*.pdb
+*.obj
+
+# 运行时文件
+_*.log
+*.pid
+.screenshot-monitor-state.json
+
+# IDE / 系统
+.vs/
+.vscode/
+*.user
+Thumbs.db
+desktop.ini
