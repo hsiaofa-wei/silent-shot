@@ -1,38 +1,81 @@
-# SilentShot · 静默后台热键截图
+本仓库基于上游跨平台项目裁剪并拓展，**仅面向 Windows**。
 
-一个跨平台的「无界面、后台、热键触发」截图小工具。一键静默截下整个屏幕（含多显示器），
-**无遮罩、无通知、无声音、无窗口闪现** —— 投屏 / 会议 / 录屏中也不会被察觉。
+| 组件 | 说明 |
+| --- | --- |
+| **[windows/](windows/)** | 静默截图主程序（单文件 C#，`winexe` 无窗口） |
+| **[shot-board/](shot-board/)** | 局域网看板：手机浏览器实时查看最新截图（纯 Python 标准库） |
 
-| 平台 | 默认热键 | 说明 | 实现 |
-| --- | --- | --- | --- |
-| **Windows** | `Ctrl+Alt+S` | [windows/README](windows/README.md) | 单文件 C#（winexe），无窗口 |
-| **macOS** | `⌃⌥S` | [macos/README](macos/README.md) | 单文件 Swift 菜单栏 App，可配置 + GUI/HTML |
+---
 
-## 共同理念
+## 相对原项目做了什么
 
-- **静默**：截图不发声、不闪屏、不弹通知、不抢焦点。
-- **后台**：常驻进程只为接收全局热键；Windows 版无任何窗口，macOS 版可隐藏菜单栏图标。
-- **热键驱动**：按一下就截全屏，存到「图片」目录，文件名带时间戳。
-- **诚实**：受 DRM / 硬件保护的画面会截成黑块，软件无法绕过；macOS 15+ 还会周期性提醒
-  「正在录制屏幕」（系统机制，无法关闭）。详见各平台 README 的「局限」。
+| 变更 | 说明 |
+| --- | --- |
+| **去掉 macOS** | 移除 Swift 菜单栏 App、安装脚本与 HTML 设置页；仓库只保留 Windows 路径 |
+| **Windows 拓宽** | 在原有 `Ctrl+Alt+S` 全屏截图之外，增加 **Alt + 对角双击** 的静默区域截图（无遮罩） |
+| **shot-board** | 新增局域网 HTTP 看板，手机浏览器跟拍最新截图与历史缩略图，图片不进手机相册 |
+
+截图仍保存到：`我的图片\Screenshots\shot_yyyyMMdd_HHmmss.png`  
+运行日志：`我的图片\Screenshots\_listener.log`
+
+> 受 DRM 硬件保护的内容（如 Netflix）会截成黑块，软件无法绕过。
+
+---
+
+## 截图操作
+
+| 操作 | 效果 |
+| --- | --- |
+| **`Ctrl+Alt+S`** | 静默截取整个虚拟屏幕（含多显示器） |
+| **按住 `Alt`，对角双击两次** | 区域截图：起点对角双击一下，终点对角再双击一下，截取对角线矩形 |
+
+特性要点：零界面（隐藏窗体 + 全局热键 / 鼠标钩子）、DPI 感知、单实例 Mutex、纯 .NET Framework、无第三方依赖。
+
+---
 
 ## 快速开始
 
-**Windows**（系统自带 .NET Framework 4.x）：
+### 1. 编译并运行截图程序
 
-```powershell
-cd windows
-powershell -ExecutionPolicy Bypass -File build.ps1   # 生成 SilentShot.exe
-```
+需要 Windows + .NET Framework 4.x（系统自带）。
 
-**macOS**（需要 macOS 14+ 和 `swiftc`）：
+**编译：**
 
-```sh
-cd macos
-./install.sh        # 编译 → 安装到 ~/Applications → 启动
-```
+- cd 项目所在目录
+- powershell -ExecutionPolicy Bypass -File build.ps1（生成 SilentShot.exe）
 
-macOS 版额外支持**可配置热键 / 保存位置**，并提供**菜单栏偏好窗口**与**HTML 设置页**两套配置界面。
+**启动：**
+
+- .\SilentShot.exe（或双击SilentShot.exe）
+
+
+**停止：**
+
+- 任务管理器结束 `SilentShot.exe`
+- Stop-Process -Name SilentShot
+- taskkill /IM SilentShot.exe /F
+
+
+
+### 手机看板 shot-board（可选）
+
+电脑与手机在同一局域网。先保证 `SilentShot` 在跑并已有截图，再：
+
+- cd shot-board
+- python shot_board.py
+
+
+终端会打印本机 IP，用手机浏览器打开即可。默认监视 `我的图片\Screenshots`，端口 `8765`。结束服务：`Ctrl+C`。
+
+可选参数：
+
+- dir   截图目录（默认 Pictures\Screenshots）
+- port  端口（默认 8765）
+- host  监听地址（默认 0.0.0.0）
+
+
+需要 Python 3.8+，仅用标准库，无第三方依赖。
+
 
 ## 许可证
 

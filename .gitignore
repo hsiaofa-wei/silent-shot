@@ -3,18 +3,21 @@
 *.pdb
 *.obj
 
-# macOS 编译产物
-*.app/
-macos/SilentShot.app/
-
 # 运行时文件
 _*.log
 *.pid
 .screenshot-monitor-state.json
 
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
 # IDE / 系统
 .vs/
 .vscode/
+.idea/
 *.user
 Thumbs.db
 desktop.ini
